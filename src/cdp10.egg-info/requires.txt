@@ -1,0 +1,17 @@
+pytorch-lightning
+numpy
+soundfile
+librosa
+torchaudio
+omegaconf
+einops
+music2latent
+huggingface_hub
+PyYAML
+scipy
+joblib
+albumentations
+lmdb
+mpi4py
+flash-attn
+pillow

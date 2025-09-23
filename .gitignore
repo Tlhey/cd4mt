@@ -1,0 +1,38 @@
+# Python
+__pycache__/
+*.py[cod]
+*.so
+dist/
+build/
+
+# ML/PyTorch
+*.pt
+*.pth
+*.ckpt
+*_logs/
+wandb/
+data/
+
+# IDE
+.vscode/
+.idea/
+.*/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Audio files
+*.wav
+*.mp3
+*.flac
+
+# Temp
+*.tmp
+*.log
+
+#
+copy/
+scripts/
+src/env/
+fig/
