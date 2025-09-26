@@ -11,11 +11,21 @@ from .audio import *
 
 class EncoderDecoder:
     def __init__(self, load_path_inference=None, device=None):
-        download_model()
+        """Lightweight wrapper that holds the generator and routes encode/decode calls.
+
+        Note: We intentionally require an explicit `device` to avoid accidentally
+        initializing CUDA context on the default GPU (cuda:0). Pass a concrete
+        `torch.device`, e.g. `torch.device('cuda:4')` or `torch.device('cpu')`.
+        """
         if device is None:
-            self.device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+            # Enforce explicit device selection to prevent unintended use of cuda:0
+            raise ValueError(
+                "EncoderDecoder requires explicit 'device' (e.g., torch.device('cuda:4') or 'cpu')"
+            )
         else:
             self.device = device
+        # Delay any heavy work until after device is validated
+        download_model()
         self.load_path_inference = load_path_inference
         if load_path_inference is None:
             self.load_path_inference = load_path_inference_default

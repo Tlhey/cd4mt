@@ -29,7 +29,7 @@ from cm.script_util import (
 from cm.train_util import CMTrainLoop
 
 # utils
-from ldm.modules.util import count_params
+from ldm.modules.util import count_params, summarize_params
 
 
 class CTMMultitrackModel(pl.LightningModule):
@@ -92,7 +92,8 @@ class CTMMultitrackModel(pl.LightningModule):
         # =========================
         # 1. Audio Auto-Encoder (CAE)
         # =========================
-        self.autoencoder = EncoderDecoder()
+        # CAE 在首次使用时根据张量设备来初始化，避免默认 cuda:0
+        self.autoencoder = None
         self.cae_latent_dim = cae_latent_dim
         self.cae_z_channels = cae_z_channels
         self.sample_rate = sample_rate
@@ -244,9 +245,12 @@ class CTMMultitrackModel(pl.LightningModule):
         print(f"   - Sampling steps: {sampling_steps}")
         print(f"   - Training mode: {training_mode}")
 
-        # Count parameters
-        total_params = sum(p.numel() for p in self.model.parameters())
-        print(f"CTM Model has {total_params:,} parameters.")
+        # 参数规模与内存占用
+        try:
+            summarize_params(self.model, name="CTM.UNet")
+        except Exception:
+            total_params = sum(p.numel() for p in self.model.parameters())
+            print(f"CTM Model has {total_params:,} parameters.")
 
     def encode_audio(self, audio: torch.Tensor) -> torch.Tensor:
         """
@@ -264,6 +268,11 @@ class CTMMultitrackModel(pl.LightningModule):
             audio = audio.unsqueeze(1)
 
         batch_size, num_stems, audio_length = audio.shape
+
+        # Ensure CAE exists on the right device
+        if self.autoencoder is None:
+            dev = getattr(self, 'device', None) or audio.device
+            self.autoencoder = EncoderDecoder(device=dev)
 
         # Check stems count
         if num_stems != self.num_stems:
@@ -328,6 +337,11 @@ class CTMMultitrackModel(pl.LightningModule):
         Returns:
             audio: (B, S, T) - audio waveforms
         """
+        # Ensure CAE exists on the right device
+        if self.autoencoder is None:
+            dev = getattr(self, 'device', None) or latents.device
+            self.autoencoder = EncoderDecoder(device=dev)
+
         batch_size, num_channels, latent_channels, latent_length = latents.shape
 
         # Decode each channel separately
@@ -618,3 +632,7 @@ def create_ctm_model_from_config(config: Dict[str, Any]) -> CTMMultitrackModel:
 
 # Legacy aliases for backwards compatibility
 MyModelCTMMultitrack = CTMMultitrackModel
+        # 确保已初始化 CAE 到正确设备
+        if self.autoencoder is None:
+            self.autoencoder = EncoderDecoder()
+            # 该 EncoderDecoder 需要显式 device；若其实现要求 device，则在调用处按需调整

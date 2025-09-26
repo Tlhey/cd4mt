@@ -36,3 +36,9 @@ copy/
 scripts/
 src/env/
 fig/
+
+
+
+train.py
+visualize_cd4mt.ipynb
+

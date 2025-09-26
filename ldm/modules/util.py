@@ -80,10 +80,70 @@ def mean_flat(tensor):
 
 
 def count_params(model, verbose=False):
+    """Return total parameter count; optionally print a short summary.
+
+    This matches existing behavior to avoid breaking callers.
+    """
     total_params = sum(p.numel() for p in model.parameters())
     if verbose:
         print(f"{model.__class__.__name__} has {total_params * 1.e-6:.2f} M params.")
     return total_params
+
+
+def summarize_params(model, name: str | None = None, include_buffers: bool = False):
+    """Print a one‑liner summary of a model's parameter size.
+
+    - Counts total and trainable parameters.
+    - Estimates parameter memory footprint for FP32/FP16.
+    - Optionally includes buffers (e.g., running stats) in memory estimate.
+    """
+    try:
+        import torch
+    except Exception:
+        torch = None  # type: ignore
+
+    total = sum(p.numel() for p in model.parameters())
+    trainable = sum(p.numel() for p in model.parameters() if p.requires_grad)
+    buffers = sum(b.numel() for b in getattr(model, 'buffers', lambda: [])()) if include_buffers else 0
+
+    # Determine dtype from first parameter if possible
+    dtype = None
+    for p in model.parameters():
+        dtype = getattr(p, 'dtype', None)
+        if dtype is not None:
+            break
+
+    def _bytes_per_param():
+        if torch is None or dtype is None:
+            return 4  # assume FP32
+        if dtype in (getattr(torch, 'float16', None), getattr(torch, 'bfloat16', None)):
+            return 2
+        if dtype in (getattr(torch, 'float32', None), getattr(torch, 'float', None)):
+            return 4
+        if dtype in (getattr(torch, 'float64', None), getattr(torch, 'double', None)):
+            return 8
+        return 4
+
+    bpp = _bytes_per_param()
+    param_mem_mb = (total * bpp) / (1024 ** 2)
+    if include_buffers:
+        param_mem_mb += (buffers * bpp) / (1024 ** 2)
+
+    title = name or model.__class__.__name__
+    print(
+        f"[Model] {title}: params={total:,} (trainable={trainable:,}), "
+        f"param_mem≈{param_mem_mb:.1f} MB (dtype={str(dtype) if dtype is not None else 'unknown'})"
+    )
+
+    return {
+        'name': title,
+        'total_params': total,
+        'trainable_params': trainable,
+        'buffers': buffers,
+        'bytes_per_param': bpp,
+        'param_mem_mb': param_mem_mb,
+        'dtype': str(dtype) if dtype is not None else 'unknown',
+    }
 
 
 def instantiate_from_config(config):

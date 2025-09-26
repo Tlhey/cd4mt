@@ -16,6 +16,7 @@ from cm.script_util import (
     create_ema_and_scales_fn,
 )
 from cm.train_util import CMTrainLoop
+import torch
 import torch.distributed as dist
 import copy
 
@@ -52,6 +53,21 @@ def main():
     model.train()
     if args.use_fp16:
         model.convert_to_fp16()
+
+    # 参数统计（便于选择模型规模）
+    try:
+        total_params = sum(p.numel() for p in model.parameters())
+        trainable_params = sum(p.numel() for p in model.parameters() if p.requires_grad)
+        # 估计参数内存（不含优化器/激活），根据 dtype 粗略估计
+        sample_param = next((p for p in model.parameters()), None)
+        bytes_per_param = 2 if (sample_param is not None and sample_param.dtype in (torch.float16, torch.bfloat16)) else 4
+        est_param_mem_mb = (total_params * bytes_per_param) / (1024 ** 2)
+        logger.log(
+            f"[Model] CM.UNet params={total_params:,} (trainable={trainable_params:,}), "
+            f"param_mem≈{est_param_mem_mb:.1f} MB (dtype={str(sample_param.dtype) if sample_param is not None else 'fp32'})"
+        )
+    except Exception as _e:
+        pass
 
     schedule_sampler = create_named_schedule_sampler(args.schedule_sampler, diffusion)
 

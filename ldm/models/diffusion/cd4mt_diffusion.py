@@ -25,7 +25,7 @@ from ldm.models.diffusion.ctm.audio_diffusion_pytorch_.diffusion import (
 from ldm.modules.modules.diffusionmodules.openaimodel import UNetModel
 
 # utils
-from ldm.modules.util import instantiate_from_config, count_params
+from ldm.modules.util import instantiate_from_config, count_params, summarize_params
 
 
 class ScoreDiffusionModel(pl.LightningModule):
@@ -72,7 +72,8 @@ class ScoreDiffusionModel(pl.LightningModule):
         # =========================
         # 1. Audio Auto-Encoder (CAE)
         # =========================
-        self.autoencoder = EncoderDecoder()
+        # Lazily construct CAE on the correct device when first used
+        self.autoencoder = None
         self.cae_latent_dim = cae_latent_dim
         self.cae_z_channels = cae_z_channels
         self.sample_rate = sample_rate
@@ -108,8 +109,11 @@ class ScoreDiffusionModel(pl.LightningModule):
         unet_config["params"]["in_channels"] = diffusion_in_channels
         unet_config["params"]["out_channels"] = diffusion_in_channels
         
-        print(f"🏗️ Creating UNet with {diffusion_in_channels} channels")
-        print(f"   UNet config: {unet_config}")
+        print(f"[Init] Creating UNet with in/out channels = {diffusion_in_channels}")
+        print(f"        UNet config(model_channels={unet_config['params'].get('model_channels')}, "
+              f"num_res_blocks={unet_config['params'].get('num_res_blocks')}, "
+              f"channel_mult={unet_config['params'].get('channel_mult')}, "
+              f"num_head_channels={unet_config['params'].get('num_head_channels')})")
         
         # 3.4 创建AudioDiffusionModel_2d
         self.audio_diffusion = AudioDiffusionModel_2d(
@@ -148,9 +152,27 @@ class ScoreDiffusionModel(pl.LightningModule):
         print(f"   - Diffusion in channels: {diffusion_in_channels}")
         print(f"   - Learning rate: {self.learning_rate}")
         print(f"   - Sampling steps: {sampling_steps}")
-        
-        # 计算参数数量
-        count_params(self.audio_diffusion, verbose=True)
+
+        # 参数规模与内存占用（更详细）
+        try:
+            summarize_params(self.audio_diffusion, name="AudioDiffusionModel_2d")
+            if hasattr(self.audio_diffusion, 'unet'):
+                summarize_params(self.audio_diffusion.unet, name="UNet (inner)")
+        except Exception as _e:
+            # 回退到简单统计，避免因 dtype 等导致初始化报错
+            count_params(self.audio_diffusion, verbose=True)
+
+        # 形状/超参安全检查（提前发现常见断言）
+        try:
+            mc = int(unet_config['params'].get('model_channels'))
+            cmult = list(unet_config['params'].get('channel_mult'))
+            head_dim = int(unet_config['params'].get('num_head_channels', -1))
+            if head_dim != -1:
+                bad = [mc * int(m) for m in cmult if (mc * int(m)) % head_dim != 0]
+                if bad:
+                    print(f"[Warn] num_head_channels={head_dim} does not divide channels at levels: {bad}")
+        except Exception:
+            pass
     
     def encode_audio(self, audio: torch.Tensor) -> torch.Tensor:
         """
@@ -162,6 +184,11 @@ class ScoreDiffusionModel(pl.LightningModule):
         Returns:
             latents: (B, S, C_lat, L) - CAE潜在表示
         """
+        # 确保已初始化 CAE 到正确设备
+        if self.autoencoder is None:
+            dev = getattr(self, 'device', None) or audio.device
+            self.autoencoder = EncoderDecoder(device=dev)
+
         # 确保输入是3D: (B, S, T)
         if audio.dim() == 2:
             # (B, T) -> (B, 1, T)
@@ -233,6 +260,11 @@ class ScoreDiffusionModel(pl.LightningModule):
         Returns:
             audio: (B, S, T) - 音频波形
         """
+        # 确保已初始化 CAE 到正确设备
+        if self.autoencoder is None:
+            dev = getattr(self, 'device', None) or latents.device
+            self.autoencoder = EncoderDecoder(device=dev)
+
         batch_size, num_channels, latent_channels, latent_length = latents.shape
         
         # 分别解码每个通道
