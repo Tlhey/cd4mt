@@ -1,0 +1,55 @@
+=== START 2025年 09月 27日 星期六 14:03:25 CST ===
+CWD=/data1/yuchen/cd4mt
+/home/yuchen/.local/share/mamba/envs/cdp10/lib/python3.10/site-packages/torch/cuda/__init__.py:61: FutureWarning: The pynvml package is deprecated. Please install nvidia-ml-py instead. If you did not install pynvml directly, please report this to the maintainers of the package that installed pynvml for you.
+  import pynvml  # type: ignore[import]
+Using config: configs/cd4mt_medium.yaml
+Found 1290 tracks.
+sr=44100, min: 10, max: 600
+Keeping 1289 of 1290 tracks
+Data size: 26309
+Use mixup rate of 0.0; Use SpecAug (T,F) of (0, 0); Use blurring effect or not False
+| Audiostock Dataset Length:26309 | Epoch Length: 26309
+Found 271 tracks.
+sr=44100, min: 10, max: 600
+Keeping 270 of 271 tracks
+Data size: 5422
+Use mixup rate of 0.0; Use SpecAug (T,F) of (0, 0); Use blurring effect or not False
+| Audiostock Dataset Length:5422 | Epoch Length: 5422
+Found 152 tracks.
+sr=44100, min: 10, max: 600
+Keeping 151 of 152 tracks
+Data size: 3249
+Use mixup rate of 0.0; Use SpecAug (T,F) of (0, 0); Use blurring effect or not False
+| Audiostock Dataset Length:3249 | Epoch Length: 3249
+Selected CUDA:0 (free ~22.6 GB)
+/data1/yuchen/cd4mt/src/music2latent/music2latent
+[Model] CM.UNet: params=150,610,371 (trainable=150,610,371), param_mem≈574.5 MB (dtype=torch.float32)
+/data1/yuchen/cd4mt/test.py:210: FutureWarning: `torch.cuda.amp.GradScaler(args...)` is deprecated. Please use `torch.amp.GradScaler('cuda', args...)` instead.
+  scaler = GradScaler()
+/data1/yuchen/cd4mt/test.py:215: FutureWarning: `torch.cuda.amp.autocast(args...)` is deprecated. Please use `torch.amp.autocast('cuda', args...)` instead.
+  with autocast(dtype=torch.float16):
+Sanity check OK. loss=0.311118
+swanlab: swanlab version 0.6.10 is available!  Upgrade: `pip install -U swanlab`
+swanlab: Tracking run with swanlab version 0.7.0-dev
+swanlab: Run data will be saved locally in 
+/data1/yuchen/cd4mt/swanlog/run-20250927_140343-d2dtjxsmqwg6gln1xgxwl
+swanlab: 👋 Hi tlhey123,welcome to swanlab!
+swanlab: Syncing run ct_unet_0927_140339 to the cloud
+swanlab: 🏠 View project at https://swanlab.cn/@tlhey123/cd4mt
+swanlab: 🚀 View run at 
+https://swanlab.cn/@tlhey123/cd4mt/runs/d2dtjxsmqwg6gln1xgxwl
+/data1/yuchen/cd4mt/test.py:251: FutureWarning: `torch.cuda.amp.autocast(args...)` is deprecated. Please use `torch.amp.autocast('cuda', args...)` instead.
+  with autocast(dtype=torch.float16):
+[train] epoch=0 step=0/4385 loss=0.3577
+Early stop this epoch (FAST_RUN)
+[train] epoch=0 avg=0.2304
+/data1/yuchen/cd4mt/test.py:294: FutureWarning: `torch.cuda.amp.autocast(args...)` is deprecated. Please use `torch.amp.autocast('cuda', args...)` instead.
+  with autocast(dtype=torch.float16):
+Early stop val (FAST_RUN)
+[val]  epoch=0 avg=0.3754
+[ckpt] saved best -> checkpoints/ct_unet_ema_best_val0.375428.pth
+[sample] WARN: generation failed: Error opening 'samples/e000_s000003/gen_bass.wav': Format not recognised.
+Best ckpt: checkpoints/ct_unet_ema_best_val0.375428.pth, val=0.375428
+swanlab: 🏠 View project at https://swanlab.cn/@tlhey123/cd4mt
+swanlab: 🚀 View run at 
+https://swanlab.cn/@tlhey123/cd4mt/runs/d2dtjxsmqwg6gln1xgxwl

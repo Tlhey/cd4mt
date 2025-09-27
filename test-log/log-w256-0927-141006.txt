@@ -1,0 +1,371 @@
+=== LONG TRAIN (w256) START 2025年 09月 27日 星期六 14:10:06 CST ===
+CUDA_VISIBLE_DEVICES=3
+Logs: test-log/log-w256-0927-141006.txt
+/home/yuchen/.local/share/mamba/envs/cdp10/lib/python3.10/site-packages/torch/cuda/__init__.py:61: FutureWarning: The pynvml package is deprecated. Please install nvidia-ml-py instead. If you did not install pynvml directly, please report this to the maintainers of the package that installed pynvml for you.
+  import pynvml  # type: ignore[import]
+Using config: configs/cd4mt_w256.yaml
+Found 1290 tracks.
+sr=44100, min: 10, max: 600
+Keeping 1289 of 1290 tracks
+Data size: 26309
+Use mixup rate of 0.0; Use SpecAug (T,F) of (0, 0); Use blurring effect or not False
+| Audiostock Dataset Length:26309 | Epoch Length: 26309
+Found 271 tracks.
+sr=44100, min: 10, max: 600
+Keeping 270 of 271 tracks
+Data size: 5422
+Use mixup rate of 0.0; Use SpecAug (T,F) of (0, 0); Use blurring effect or not False
+| Audiostock Dataset Length:5422 | Epoch Length: 5422
+Found 152 tracks.
+sr=44100, min: 10, max: 600
+Keeping 151 of 152 tracks
+Data size: 3249
+Use mixup rate of 0.0; Use SpecAug (T,F) of (0, 0); Use blurring effect or not False
+| Audiostock Dataset Length:3249 | Epoch Length: 3249
+Selected CUDA:0 (free ~22.5 GB)
+/data1/yuchen/cd4mt/src/music2latent/music2latent
+[Model] CM.UNet: params=267,693,315 (trainable=267,693,315), param_mem≈1021.2 MB (dtype=torch.float32)
+/data1/yuchen/cd4mt/test.py:237: FutureWarning: `torch.cuda.amp.GradScaler(args...)` is deprecated. Please use `torch.amp.GradScaler('cuda', args...)` instead.
+  scaler = GradScaler()
+/data1/yuchen/cd4mt/test.py:242: FutureWarning: `torch.cuda.amp.autocast(args...)` is deprecated. Please use `torch.amp.autocast('cuda', args...)` instead.
+  with autocast(dtype=torch.float16):
+Sanity check OK. loss=0.140782
+swanlab: swanlab version 0.6.10 is available!  Upgrade: `pip install -U swanlab`
+swanlab: Tracking run with swanlab version 0.7.0-dev
+swanlab: Run data will be saved locally in 
+/data1/yuchen/cd4mt/swanlog/run-20250927_141024-syaubbxj6dyxx6szu78z6
+swanlab: 👋 Hi tlhey123,welcome to swanlab!
+swanlab: Syncing run ct_unet_0927_141020 to the cloud
+swanlab: 🏠 View project at https://swanlab.cn/@tlhey123/cd4mt
+swanlab: 🚀 View run at 
+https://swanlab.cn/@tlhey123/cd4mt/runs/syaubbxj6dyxx6szu78z6
+/data1/yuchen/cd4mt/test.py:278: FutureWarning: `torch.cuda.amp.autocast(args...)` is deprecated. Please use `torch.amp.autocast('cuda', args...)` instead.
+  with autocast(dtype=torch.float16):
+[train] epoch=0 step=0/6578 loss=0.1496
+[train] epoch=0 step=20/6578 loss=0.0750
+[train] epoch=0 step=40/6578 loss=0.0928
+[train] epoch=0 step=60/6578 loss=0.0507
+[train] epoch=0 step=80/6578 loss=0.0334
+[train] epoch=0 step=100/6578 loss=0.0797
+[train] epoch=0 step=120/6578 loss=0.0613
+[train] epoch=0 step=140/6578 loss=0.1591
+[train] epoch=0 step=160/6578 loss=0.1221
+[train] epoch=0 step=180/6578 loss=0.0408
+[train] epoch=0 step=200/6578 loss=0.0979
+[train] epoch=0 step=220/6578 loss=0.1037
+[train] epoch=0 step=240/6578 loss=0.0902
+[train] epoch=0 step=260/6578 loss=0.0794
+[train] epoch=0 step=280/6578 loss=0.1459
+[train] epoch=0 step=300/6578 loss=0.1214
+[train] epoch=0 step=320/6578 loss=0.1102
+[train] epoch=0 step=340/6578 loss=0.0949
+[train] epoch=0 step=360/6578 loss=0.1412
+[train] epoch=0 step=380/6578 loss=0.0570
+[train] epoch=0 step=400/6578 loss=0.0777
+[train] epoch=0 step=420/6578 loss=0.0550
+[train] epoch=0 step=440/6578 loss=0.1005
+[train] epoch=0 step=460/6578 loss=0.0425
+[train] epoch=0 step=480/6578 loss=0.0397
+[train] epoch=0 step=500/6578 loss=0.0940
+[train] epoch=0 step=520/6578 loss=0.0308
+[train] epoch=0 step=540/6578 loss=0.0333
+[train] epoch=0 step=560/6578 loss=0.0492
+[train] epoch=0 step=580/6578 loss=0.0507
+[train] epoch=0 step=600/6578 loss=0.1092
+[train] epoch=0 step=620/6578 loss=0.1276
+[train] epoch=0 step=640/6578 loss=0.0631
+[train] epoch=0 step=660/6578 loss=0.0236
+[train] epoch=0 step=680/6578 loss=0.1356
+[train] epoch=0 step=700/6578 loss=0.0921
+[train] epoch=0 step=720/6578 loss=0.0729
+[train] epoch=0 step=740/6578 loss=0.0899
+[train] epoch=0 step=760/6578 loss=0.0434
+[train] epoch=0 step=780/6578 loss=0.0317
+[train] epoch=0 step=800/6578 loss=0.1202
+[train] epoch=0 step=820/6578 loss=0.0689
+[train] epoch=0 step=840/6578 loss=0.0477
+[train] epoch=0 step=860/6578 loss=0.1565
+[train] epoch=0 step=880/6578 loss=0.0696
+[train] epoch=0 step=900/6578 loss=0.0550
+[train] epoch=0 step=920/6578 loss=0.0777
+[train] epoch=0 step=940/6578 loss=0.1457
+[train] epoch=0 step=960/6578 loss=0.0788
+[train] epoch=0 step=980/6578 loss=0.0367
+[train] epoch=0 step=1000/6578 loss=0.0557
+[train] epoch=0 step=1020/6578 loss=0.0382
+[train] epoch=0 step=1040/6578 loss=0.1226
+[train] epoch=0 step=1060/6578 loss=0.1497
+[train] epoch=0 step=1080/6578 loss=0.0582
+[train] epoch=0 step=1100/6578 loss=0.0972
+[train] epoch=0 step=1120/6578 loss=0.0609
+[train] epoch=0 step=1140/6578 loss=0.0999
+[train] epoch=0 step=1160/6578 loss=0.0566
+[train] epoch=0 step=1180/6578 loss=0.0489
+[train] epoch=0 step=1200/6578 loss=0.0426
+[train] epoch=0 step=1220/6578 loss=0.0586
+[train] epoch=0 step=1240/6578 loss=0.1607
+[train] epoch=0 step=1260/6578 loss=0.1021
+[train] epoch=0 step=1280/6578 loss=0.1139
+[train] epoch=0 step=1300/6578 loss=0.0715
+[train] epoch=0 step=1320/6578 loss=0.0329
+[train] epoch=0 step=1340/6578 loss=0.0845
+[train] epoch=0 step=1360/6578 loss=0.0795
+[train] epoch=0 step=1380/6578 loss=0.0909
+[train] epoch=0 step=1400/6578 loss=0.0787
+[train] epoch=0 step=1420/6578 loss=0.0468
+[train] epoch=0 step=1440/6578 loss=0.0710
+[train] epoch=0 step=1460/6578 loss=0.0621
+[train] epoch=0 step=1480/6578 loss=0.0632
+[train] epoch=0 step=1500/6578 loss=0.0957
+[train] epoch=0 step=1520/6578 loss=0.1076
+[train] epoch=0 step=1540/6578 loss=0.0683
+[train] epoch=0 step=1560/6578 loss=0.0995
+[train] epoch=0 step=1580/6578 loss=0.0872
+[train] epoch=0 step=1600/6578 loss=0.0393
+[train] epoch=0 step=1620/6578 loss=0.0778
+[train] epoch=0 step=1640/6578 loss=0.0669
+[train] epoch=0 step=1660/6578 loss=0.0932
+[train] epoch=0 step=1680/6578 loss=0.0388
+[train] epoch=0 step=1700/6578 loss=0.0310
+[train] epoch=0 step=1720/6578 loss=0.0694
+[train] epoch=0 step=1740/6578 loss=0.0380
+[train] epoch=0 step=1760/6578 loss=0.1477
+[train] epoch=0 step=1780/6578 loss=0.0654
+[train] epoch=0 step=1800/6578 loss=0.0509
+[train] epoch=0 step=1820/6578 loss=0.1215
+[train] epoch=0 step=1840/6578 loss=0.0864
+[train] epoch=0 step=1860/6578 loss=0.0821
+[train] epoch=0 step=1880/6578 loss=0.1466
+[train] epoch=0 step=1900/6578 loss=0.0394
+[train] epoch=0 step=1920/6578 loss=0.0513
+[train] epoch=0 step=1940/6578 loss=0.0571
+[train] epoch=0 step=1960/6578 loss=0.0347
+[train] epoch=0 step=1980/6578 loss=0.0260
+[train] epoch=0 step=2000/6578 loss=0.0606
+[train] epoch=0 step=2020/6578 loss=0.0897
+[train] epoch=0 step=2040/6578 loss=0.1198
+[train] epoch=0 step=2060/6578 loss=0.0883
+[train] epoch=0 step=2080/6578 loss=0.1025
+[train] epoch=0 step=2100/6578 loss=0.0838
+[train] epoch=0 step=2120/6578 loss=0.0248
+[train] epoch=0 step=2140/6578 loss=0.0772
+[train] epoch=0 step=2160/6578 loss=0.0580
+[train] epoch=0 step=2180/6578 loss=0.0891
+[train] epoch=0 step=2200/6578 loss=0.0445
+[train] epoch=0 step=2220/6578 loss=0.0861
+[train] epoch=0 step=2240/6578 loss=0.0661
+[train] epoch=0 step=2260/6578 loss=0.1437
+[train] epoch=0 step=2280/6578 loss=0.0365
+[train] epoch=0 step=2300/6578 loss=0.0874
+[train] epoch=0 step=2320/6578 loss=0.0488
+[train] epoch=0 step=2340/6578 loss=0.0931
+[train] epoch=0 step=2360/6578 loss=0.0695
+[train] epoch=0 step=2380/6578 loss=0.1253
+[train] epoch=0 step=2400/6578 loss=0.0958
+[train] epoch=0 step=2420/6578 loss=0.1591
+[train] epoch=0 step=2440/6578 loss=0.0365
+[train] epoch=0 step=2460/6578 loss=0.1113
+[train] epoch=0 step=2480/6578 loss=0.0643
+[train] epoch=0 step=2500/6578 loss=0.1065
+[train] epoch=0 step=2520/6578 loss=0.1940
+[train] epoch=0 step=2540/6578 loss=0.1085
+[train] epoch=0 step=2560/6578 loss=0.1071
+[train] epoch=0 step=2580/6578 loss=0.0304
+[train] epoch=0 step=2600/6578 loss=0.1614
+[train] epoch=0 step=2620/6578 loss=0.0308
+[train] epoch=0 step=2640/6578 loss=0.0289
+[train] epoch=0 step=2660/6578 loss=0.0550
+[train] epoch=0 step=2680/6578 loss=0.0525
+[train] epoch=0 step=2700/6578 loss=0.0911
+[train] epoch=0 step=2720/6578 loss=0.0795
+[train] epoch=0 step=2740/6578 loss=0.1006
+[train] epoch=0 step=2760/6578 loss=0.0667
+[train] epoch=0 step=2780/6578 loss=0.1616
+[train] epoch=0 step=2800/6578 loss=0.0752
+[train] epoch=0 step=2820/6578 loss=0.0092
+[train] epoch=0 step=2840/6578 loss=0.0459
+[train] epoch=0 step=2860/6578 loss=0.1669
+[train] epoch=0 step=2880/6578 loss=0.0495
+[train] epoch=0 step=2900/6578 loss=0.0326
+[train] epoch=0 step=2920/6578 loss=0.0953
+[train] epoch=0 step=2940/6578 loss=0.0651
+[train] epoch=0 step=2960/6578 loss=0.0849
+[train] epoch=0 step=2980/6578 loss=0.0720
+[train] epoch=0 step=3000/6578 loss=0.0550
+[train] epoch=0 step=3020/6578 loss=0.0367
+[train] epoch=0 step=3040/6578 loss=0.1221
+[train] epoch=0 step=3060/6578 loss=0.1191
+[train] epoch=0 step=3080/6578 loss=0.1083
+[train] epoch=0 step=3100/6578 loss=0.0702
+[train] epoch=0 step=3120/6578 loss=0.1039
+[train] epoch=0 step=3140/6578 loss=0.0951
+[train] epoch=0 step=3160/6578 loss=0.0384
+[train] epoch=0 step=3180/6578 loss=0.0541
+[train] epoch=0 step=3200/6578 loss=0.0421
+[train] epoch=0 step=3220/6578 loss=0.0542
+[train] epoch=0 step=3240/6578 loss=0.0418
+[train] epoch=0 step=3260/6578 loss=0.0773
+[train] epoch=0 step=3280/6578 loss=0.0694
+[train] epoch=0 step=3300/6578 loss=0.0574
+[train] epoch=0 step=3320/6578 loss=0.1384
+[train] epoch=0 step=3340/6578 loss=0.0571
+[train] epoch=0 step=3360/6578 loss=0.1235
+[train] epoch=0 step=3380/6578 loss=0.1109
+[train] epoch=0 step=3400/6578 loss=0.0153
+[train] epoch=0 step=3420/6578 loss=0.0870
+[train] epoch=0 step=3440/6578 loss=0.1172
+[train] epoch=0 step=3460/6578 loss=0.0435
+[train] epoch=0 step=3480/6578 loss=0.0436
+[train] epoch=0 step=3500/6578 loss=0.0624
+[train] epoch=0 step=3520/6578 loss=0.0239
+[train] epoch=0 step=3540/6578 loss=0.0909
+[train] epoch=0 step=3560/6578 loss=0.0438
+[train] epoch=0 step=3580/6578 loss=0.1499
+[train] epoch=0 step=3600/6578 loss=0.0267
+[train] epoch=0 step=3620/6578 loss=0.1015
+[train] epoch=0 step=3640/6578 loss=0.1006
+[train] epoch=0 step=3660/6578 loss=0.0694
+[train] epoch=0 step=3680/6578 loss=0.0745
+[train] epoch=0 step=3700/6578 loss=0.0705
+[train] epoch=0 step=3720/6578 loss=0.0971
+[train] epoch=0 step=3740/6578 loss=0.0167
+[train] epoch=0 step=3760/6578 loss=0.0978
+[train] epoch=0 step=3780/6578 loss=0.0616
+[train] epoch=0 step=3800/6578 loss=0.1070
+[train] epoch=0 step=3820/6578 loss=0.0861
+[train] epoch=0 step=3840/6578 loss=0.0556
+[train] epoch=0 step=3860/6578 loss=0.0708
+[train] epoch=0 step=3880/6578 loss=0.0124
+[train] epoch=0 step=3900/6578 loss=0.0292
+[train] epoch=0 step=3920/6578 loss=0.0859
+[train] epoch=0 step=3940/6578 loss=0.0566
+[train] epoch=0 step=3960/6578 loss=0.0187
+[train] epoch=0 step=3980/6578 loss=0.0510
+[train] epoch=0 step=4000/6578 loss=0.0897
+[train] epoch=0 step=4020/6578 loss=0.0955
+[train] epoch=0 step=4040/6578 loss=0.0444
+[train] epoch=0 step=4060/6578 loss=0.1000
+[train] epoch=0 step=4080/6578 loss=0.0286
+[train] epoch=0 step=4100/6578 loss=0.1490
+[train] epoch=0 step=4120/6578 loss=0.0510
+[train] epoch=0 step=4140/6578 loss=0.0871
+[train] epoch=0 step=4160/6578 loss=0.1065
+[train] epoch=0 step=4180/6578 loss=0.0474
+[train] epoch=0 step=4200/6578 loss=0.0340
+[train] epoch=0 step=4220/6578 loss=0.0255
+[train] epoch=0 step=4240/6578 loss=0.0325
+[train] epoch=0 step=4260/6578 loss=0.0596
+[train] epoch=0 step=4280/6578 loss=0.1061
+[train] epoch=0 step=4300/6578 loss=0.0250
+[train] epoch=0 step=4320/6578 loss=0.0786
+[train] epoch=0 step=4340/6578 loss=0.0674
+[train] epoch=0 step=4360/6578 loss=0.1082
+[train] epoch=0 step=4380/6578 loss=0.0712
+[train] epoch=0 step=4400/6578 loss=0.0245
+[train] epoch=0 step=4420/6578 loss=0.0523
+[train] epoch=0 step=4440/6578 loss=0.1199
+[train] epoch=0 step=4460/6578 loss=0.0564
+[train] epoch=0 step=4480/6578 loss=0.0179
+[train] epoch=0 step=4500/6578 loss=0.0598
+[train] epoch=0 step=4520/6578 loss=0.0889
+[train] epoch=0 step=4540/6578 loss=0.0252
+[train] epoch=0 step=4560/6578 loss=0.0669
+[train] epoch=0 step=4580/6578 loss=0.0555
+[train] epoch=0 step=4600/6578 loss=0.0715
+[train] epoch=0 step=4620/6578 loss=0.1274
+[train] epoch=0 step=4640/6578 loss=0.0629
+[train] epoch=0 step=4660/6578 loss=0.0650
+[train] epoch=0 step=4680/6578 loss=0.1390
+[train] epoch=0 step=4700/6578 loss=0.1028
+[train] epoch=0 step=4720/6578 loss=0.1207
+[train] epoch=0 step=4740/6578 loss=0.1188
+[train] epoch=0 step=4760/6578 loss=0.1060
+[train] epoch=0 step=4780/6578 loss=0.0484
+[train] epoch=0 step=4800/6578 loss=0.0596
+[train] epoch=0 step=4820/6578 loss=0.0248
+[train] epoch=0 step=4840/6578 loss=0.0542
+[train] epoch=0 step=4860/6578 loss=0.0532
+[train] epoch=0 step=4880/6578 loss=0.0662
+[train] epoch=0 step=4900/6578 loss=0.0597
+[train] epoch=0 step=4920/6578 loss=0.0903
+[train] epoch=0 step=4940/6578 loss=0.1112
+[train] epoch=0 step=4960/6578 loss=0.0805
+[train] epoch=0 step=4980/6578 loss=0.1107
+[train] epoch=0 step=5000/6578 loss=0.1381
+[train] epoch=0 step=5020/6578 loss=0.0556
+[train] epoch=0 step=5040/6578 loss=0.0881
+[train] epoch=0 step=5060/6578 loss=0.0564
+[train] epoch=0 step=5080/6578 loss=0.0858
+[train] epoch=0 step=5100/6578 loss=0.0230
+[train] epoch=0 step=5120/6578 loss=0.0554
+[train] epoch=0 step=5140/6578 loss=0.0494
+[train] epoch=0 step=5160/6578 loss=0.1705
+[train] epoch=0 step=5180/6578 loss=0.1077
+[train] epoch=0 step=5200/6578 loss=0.0728
+[train] epoch=0 step=5220/6578 loss=0.0898
+[train] epoch=0 step=5240/6578 loss=0.0894
+[train] epoch=0 step=5260/6578 loss=0.1037
+[train] epoch=0 step=5280/6578 loss=0.1338
+[train] epoch=0 step=5300/6578 loss=0.1202
+[train] epoch=0 step=5320/6578 loss=0.0691
+[train] epoch=0 step=5340/6578 loss=0.1310
+[train] epoch=0 step=5360/6578 loss=0.0804
+[train] epoch=0 step=5380/6578 loss=0.0871
+[train] epoch=0 step=5400/6578 loss=0.0316
+[train] epoch=0 step=5420/6578 loss=0.1025
+[train] epoch=0 step=5440/6578 loss=0.0091
+[train] epoch=0 step=5460/6578 loss=0.0092
+[train] epoch=0 step=5480/6578 loss=0.0482
+[train] epoch=0 step=5500/6578 loss=0.1001
+[train] epoch=0 step=5520/6578 loss=0.0554
+[train] epoch=0 step=5540/6578 loss=0.0299
+[train] epoch=0 step=5560/6578 loss=0.1186
+[train] epoch=0 step=5580/6578 loss=0.0441
+[train] epoch=0 step=5600/6578 loss=0.0296
+[train] epoch=0 step=5620/6578 loss=0.0231
+[train] epoch=0 step=5640/6578 loss=0.0532
+[train] epoch=0 step=5660/6578 loss=0.0661
+[train] epoch=0 step=5680/6578 loss=0.1701
+[train] epoch=0 step=5700/6578 loss=0.0884
+[train] epoch=0 step=5720/6578 loss=0.0543
+[train] epoch=0 step=5740/6578 loss=0.0336
+[train] epoch=0 step=5760/6578 loss=0.0957
+[train] epoch=0 step=5780/6578 loss=0.0347
+[train] epoch=0 step=5800/6578 loss=0.0370
+[train] epoch=0 step=5820/6578 loss=0.0528
+[train] epoch=0 step=5840/6578 loss=0.0137
+[train] epoch=0 step=5860/6578 loss=0.0921
+[train] epoch=0 step=5880/6578 loss=0.0988
+[train] epoch=0 step=5900/6578 loss=0.1079
+swanlab: Error happened while training
+swanlab: 🏠 View project at https://swanlab.cn/@tlhey123/cd4mt
+swanlab: 🚀 View run at 
+https://swanlab.cn/@tlhey123/cd4mt/runs/syaubbxj6dyxx6szu78z6
+  File "/data1/yuchen/cd4mt/test.py", line 410, in <module>
+    main()
+  File "/data1/yuchen/cd4mt/test.py", line 275, in main
+    for step, batch in enumerate(train_loader):
+  File "/home/yuchen/.local/share/mamba/envs/cdp10/lib/python3.10/site-packages/torch/utils/data/dataloader.py", line 733, in __next__
+    data = self._next_data()
+  File "/home/yuchen/.local/share/mamba/envs/cdp10/lib/python3.10/site-packages/torch/utils/data/dataloader.py", line 1515, in _next_data
+    return self._process_data(data, worker_id)
+  File "/home/yuchen/.local/share/mamba/envs/cdp10/lib/python3.10/site-packages/torch/utils/data/dataloader.py", line 1550, in _process_data
+    data.reraise()
+  File "/home/yuchen/.local/share/mamba/envs/cdp10/lib/python3.10/site-packages/torch/_utils.py", line 750, in reraise
+    raise exception
+Caught AssertionError in DataLoader worker process 3.
+Original Traceback (most recent call last):
+  File "/home/yuchen/.local/share/mamba/envs/cdp10/lib/python3.10/site-packages/torch/utils/data/_utils/worker.py", line 349, in _worker_loop
+    data = fetcher.fetch(index)  # type: ignore[possibly-undefined]
+  File "/home/yuchen/.local/share/mamba/envs/cdp10/lib/python3.10/site-packages/torch/utils/data/_utils/fetch.py", line 52, in fetch
+    data = [self.dataset[idx] for idx in possibly_batched_index]
+  File "/home/yuchen/.local/share/mamba/envs/cdp10/lib/python3.10/site-packages/torch/utils/data/_utils/fetch.py", line 52, in <listcomp>
+    data = [self.dataset[idx] for idx in possibly_batched_index]
+  File "/data1/yuchen/cd4mt/ldm/data/multitrack_dataset.py", line 863, in __getitem__
+    data_dict['fbank'] = self.get_mel_from_waveform(data_dict['waveform'])
+  File "/data1/yuchen/cd4mt/ldm/data/multitrack_dataset.py", line 821, in get_mel_from_waveform
+    melspec, _, _ = self.STFT.mel_spectrogram(y)
+  File "/data1/yuchen/MusicLDM-Ext/src/utilities/audio/stft.py", line 177, in mel_spectrogram
+    assert torch.max(y.data) <= 1, torch.max(y.data)
+AssertionError: tensor(1.0088)
+

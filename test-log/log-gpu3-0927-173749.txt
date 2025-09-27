@@ -1,0 +1,28 @@
+=== TRAIN RESTART2 2025年 09月 27日 星期六 17:37:49 CST ===
+CUDA_VISIBLE_DEVICES=3
+/home/yuchen/.local/share/mamba/envs/cdp10/lib/python3.10/site-packages/torch/cuda/__init__.py:61: FutureWarning: The pynvml package is deprecated. Please install nvidia-ml-py instead. If you did not install pynvml directly, please report this to the maintainers of the package that installed pynvml for you.
+  import pynvml  # type: ignore[import]
+/home/yuchen/.local/share/mamba/envs/cdp10/lib/python3.10/site-packages/torch/cuda/__init__.py:789: UserWarning: Can't initialize NVML
+  warnings.warn("Can't initialize NVML")
+/home/yuchen/.local/share/mamba/envs/cdp10/lib/python3.10/site-packages/torch/cuda/__init__.py:991: UserWarning: CUDA initialization: Unexpected error from cudaGetDeviceCount(). Did you run some cuda functions before calling NumCudaDevices() that might have already set an error? Error 304: OS call failed or operation not supported on this OS (Triggered internally at /pytorch/c10/cuda/CUDAFunctions.cpp:109.)
+  r = torch._C._cuda_getDeviceCount() if nvml_count < 0 else nvml_count
+/home/yuchen/.local/share/mamba/envs/cdp10/lib/python3.10/site-packages/joblib/_multiprocessing_helpers.py:44: UserWarning: [Errno 13] Permission denied.  joblib will operate in serial mode
+  warnings.warn("%s.  joblib will operate in serial mode" % (e,))
+Traceback (most recent call last):
+  File "/data1/yuchen/cd4mt/test.py", line 38, in <module>
+    from ldm.data.multitrack_datamodule import DataModuleFromConfig
+  File "/data1/yuchen/cd4mt/ldm/data/multitrack_datamodule.py", line 5, in <module>
+    from ldm.data.multitrack_dataset import AudiostockDataset, DS_10283_2325_Dataset, Audiostock_splited_Dataset, Slakh_Dataset, MultiSource_Slakh_Dataset
+  File "/data1/yuchen/cd4mt/ldm/data/multitrack_dataset.py", line 17, in <module>
+    import utilities.audio as Audio
+  File "/data1/yuchen/MusicLDM-Ext/src/utilities/__init__.py", line 2, in <module>
+    from .data import *
+  File "/data1/yuchen/MusicLDM-Ext/src/utilities/data/__init__.py", line 1, in <module>
+    from .dataset import Dataset
+  File "/data1/yuchen/MusicLDM-Ext/src/utilities/data/dataset.py", line 17, in <module>
+    import utilities.audio as Audio
+  File "/data1/yuchen/MusicLDM-Ext/src/utilities/audio/__init__.py", line 2, in <module>
+    from .stft import *
+  File "/data1/yuchen/MusicLDM-Ext/src/utilities/audio/stft.py", line 5, in <module>
+    from librosa.util import pad_center, tiny
+ImportError: cannot import name 'pad_center' from 'librosa.util' (/home/yuchen/.local/share/mamba/envs/cdp10/lib/python3.10/site-packages/librosa/util/__init__.py)

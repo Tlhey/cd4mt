@@ -351,6 +351,13 @@ class KarrasDenoiser:
         return model_output, denoised
 
 
+def to_d(x, sigma, denoised):
+    """Convert model output to derivative w.r.t. sigma-time.
+    This matches k-diffusion EDM sampler convention: d = (x - denoised) / sigma.
+    """
+    return (x - denoised) / append_dims(sigma, x.ndim)
+
+
 def karras_sample(
     diffusion,
     model,

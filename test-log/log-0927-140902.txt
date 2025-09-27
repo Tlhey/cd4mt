@@ -1,0 +1,105 @@
+=== LONG TRAIN START 2025年 09月 27日 星期六 14:09:02 CST ===
+CUDA_VISIBLE_DEVICES=2
+Logs: test-log/log-0927-140902.txt
+/home/yuchen/.local/share/mamba/envs/cdp10/lib/python3.10/site-packages/torch/cuda/__init__.py:61: FutureWarning: The pynvml package is deprecated. Please install nvidia-ml-py instead. If you did not install pynvml directly, please report this to the maintainers of the package that installed pynvml for you.
+  import pynvml  # type: ignore[import]
+Using config: configs/cd4mt_medium.yaml
+Found 1290 tracks.
+sr=44100, min: 10, max: 600
+Keeping 1289 of 1290 tracks
+Data size: 26309
+Use mixup rate of 0.0; Use SpecAug (T,F) of (0, 0); Use blurring effect or not False
+| Audiostock Dataset Length:26309 | Epoch Length: 26309
+Found 271 tracks.
+sr=44100, min: 10, max: 600
+Keeping 270 of 271 tracks
+Data size: 5422
+Use mixup rate of 0.0; Use SpecAug (T,F) of (0, 0); Use blurring effect or not False
+| Audiostock Dataset Length:5422 | Epoch Length: 5422
+Found 152 tracks.
+sr=44100, min: 10, max: 600
+Keeping 151 of 152 tracks
+Data size: 3249
+Use mixup rate of 0.0; Use SpecAug (T,F) of (0, 0); Use blurring effect or not False
+| Audiostock Dataset Length:3249 | Epoch Length: 3249
+Selected CUDA:0 (free ~22.6 GB)
+/data1/yuchen/cd4mt/src/music2latent/music2latent
+[Model] CM.UNet: params=150,610,371 (trainable=150,610,371), param_mem≈574.5 MB (dtype=torch.float32)
+/data1/yuchen/cd4mt/test.py:219: FutureWarning: `torch.cuda.amp.GradScaler(args...)` is deprecated. Please use `torch.amp.GradScaler('cuda', args...)` instead.
+  scaler = GradScaler()
+/data1/yuchen/cd4mt/test.py:224: FutureWarning: `torch.cuda.amp.autocast(args...)` is deprecated. Please use `torch.amp.autocast('cuda', args...)` instead.
+  with autocast(dtype=torch.float16):
+Sanity check OK. loss=0.117046
+swanlab: swanlab version 0.6.10 is available!  Upgrade: `pip install -U swanlab`
+swanlab: Tracking run with swanlab version 0.7.0-dev
+swanlab: Run data will be saved locally in 
+/data1/yuchen/cd4mt/swanlog/run-20250927_140921-sh3kh3ccxww0wk1w2xh5d
+swanlab: 👋 Hi tlhey123,welcome to swanlab!
+swanlab: Syncing run ct_unet_0927_140916 to the cloud
+swanlab: 🏠 View project at https://swanlab.cn/@tlhey123/cd4mt
+swanlab: 🚀 View run at 
+https://swanlab.cn/@tlhey123/cd4mt/runs/sh3kh3ccxww0wk1w2xh5d
+/data1/yuchen/cd4mt/test.py:260: FutureWarning: `torch.cuda.amp.autocast(args...)` is deprecated. Please use `torch.amp.autocast('cuda', args...)` instead.
+  with autocast(dtype=torch.float16):
+[train] epoch=0 step=0/4385 loss=0.1594
+[train] epoch=0 step=20/4385 loss=0.0747
+[train] epoch=0 step=40/4385 loss=0.1111
+[train] epoch=0 step=60/4385 loss=0.0848
+[train] epoch=0 step=80/4385 loss=0.1232
+[train] epoch=0 step=100/4385 loss=0.0486
+[train] epoch=0 step=120/4385 loss=0.0960
+[train] epoch=0 step=140/4385 loss=0.0885
+[train] epoch=0 step=160/4385 loss=0.1093
+[train] epoch=0 step=180/4385 loss=0.0597
+[train] epoch=0 step=200/4385 loss=0.0733
+[train] epoch=0 step=220/4385 loss=0.0359
+[train] epoch=0 step=240/4385 loss=0.1089
+[train] epoch=0 step=260/4385 loss=0.0545
+[train] epoch=0 step=280/4385 loss=0.0705
+[train] epoch=0 step=300/4385 loss=0.0573
+[train] epoch=0 step=320/4385 loss=0.1230
+[train] epoch=0 step=340/4385 loss=0.0577
+[train] epoch=0 step=360/4385 loss=0.0728
+[train] epoch=0 step=380/4385 loss=0.1175
+[train] epoch=0 step=400/4385 loss=0.0676
+[train] epoch=0 step=420/4385 loss=0.0204
+[train] epoch=0 step=440/4385 loss=0.0979
+[train] epoch=0 step=460/4385 loss=0.0660
+[train] epoch=0 step=480/4385 loss=0.0352
+[train] epoch=0 step=500/4385 loss=0.0790
+[train] epoch=0 step=520/4385 loss=0.0780
+[train] epoch=0 step=540/4385 loss=0.0962
+[train] epoch=0 step=560/4385 loss=0.0808
+[train] epoch=0 step=580/4385 loss=0.0642
+swanlab: Error happened while training
+swanlab: 🏠 View project at https://swanlab.cn/@tlhey123/cd4mt
+swanlab: 🚀 View run at 
+https://swanlab.cn/@tlhey123/cd4mt/runs/sh3kh3ccxww0wk1w2xh5d
+  File "/data1/yuchen/cd4mt/test.py", line 392, in <module>
+    stem_name = stems[si] if si < len(stems) else f"stem{si}"
+  File "/data1/yuchen/cd4mt/test.py", line 257, in main
+    # SwanLab init
+  File "/home/yuchen/.local/share/mamba/envs/cdp10/lib/python3.10/site-packages/torch/utils/data/dataloader.py", line 733, in __next__
+    data = self._next_data()
+  File "/home/yuchen/.local/share/mamba/envs/cdp10/lib/python3.10/site-packages/torch/utils/data/dataloader.py", line 1515, in _next_data
+    return self._process_data(data, worker_id)
+  File "/home/yuchen/.local/share/mamba/envs/cdp10/lib/python3.10/site-packages/torch/utils/data/dataloader.py", line 1550, in _process_data
+    data.reraise()
+  File "/home/yuchen/.local/share/mamba/envs/cdp10/lib/python3.10/site-packages/torch/_utils.py", line 750, in reraise
+    raise exception
+Caught AssertionError in DataLoader worker process 0.
+Original Traceback (most recent call last):
+  File "/home/yuchen/.local/share/mamba/envs/cdp10/lib/python3.10/site-packages/torch/utils/data/_utils/worker.py", line 349, in _worker_loop
+    data = fetcher.fetch(index)  # type: ignore[possibly-undefined]
+  File "/home/yuchen/.local/share/mamba/envs/cdp10/lib/python3.10/site-packages/torch/utils/data/_utils/fetch.py", line 52, in fetch
+    data = [self.dataset[idx] for idx in possibly_batched_index]
+  File "/home/yuchen/.local/share/mamba/envs/cdp10/lib/python3.10/site-packages/torch/utils/data/_utils/fetch.py", line 52, in <listcomp>
+    data = [self.dataset[idx] for idx in possibly_batched_index]
+  File "/data1/yuchen/cd4mt/ldm/data/multitrack_dataset.py", line 863, in __getitem__
+    data_dict['fbank'] = self.get_mel_from_waveform(data_dict['waveform'])
+  File "/data1/yuchen/cd4mt/ldm/data/multitrack_dataset.py", line 821, in get_mel_from_waveform
+    melspec, _, _ = self.STFT.mel_spectrogram(y)
+  File "/data1/yuchen/MusicLDM-Ext/src/utilities/audio/stft.py", line 177, in mel_spectrogram
+    assert torch.max(y.data) <= 1, torch.max(y.data)
+AssertionError: tensor(1.0088)
+

@@ -25,7 +25,7 @@ trainer:
 data:
   target: ldm.data.multitrack_datamodule.DataModuleFromConfig
   params:
-    batch_size: 6            # 4090 建议 6；若 OOM 改回 4
+    batch_size: 256          # 按需求改为 128；如显存不足可配合 MICRO_BSZ 累加
     num_workers: 4
 
     augmentation:

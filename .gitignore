@@ -39,6 +39,14 @@ fig/
 
 
 
+
+configs/cd4mt_medium_notes.yaml
+
+
 train.py
 visualize_cd4mt.ipynb
+run_py.sh
+test_flash.ipynb
+train_ct_cae-exec.ipynb
+
 
