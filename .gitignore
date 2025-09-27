@@ -12,7 +12,7 @@ build/
 *_logs/
 wandb/
 data/
-test-log/*
+test-log/
 # IDE
 .vscode/
 .idea/
