@@ -12,7 +12,10 @@ build/
 *_logs/
 wandb/
 data/
-test-log/
+*-log/
+cd4mt.egg-info
+
+
 # IDE
 .vscode/
 .idea/
