@@ -1,0 +1,120 @@
+project_name: "cd4mt"
+log_directory: "./lightning_logs"
+mode: train # infer
+use_wandb: false  
+seed: 42
+
+id:
+  name: "cd4mt_default"
+  version: ""
+
+device: "cuda"
+
+trainer:
+  accelerator: gpu
+  devices: [1, 2, 3, 4, 5]
+  max_epochs: 200           #  testing
+  save_every: 20            # checkpoint 
+  val_every_n_steps: 1000   # validation 
+  limit_train_batches: 0.1 # 10% 
+  limit_val_batches: 0.1   
+  gradient_clip_val: 1.0
+  precision: 32
+  resume_from_checkpoint: null
+
+data:
+  target: ldm.data.multitrack_datamodule.DataModuleFromConfig
+  params:
+    batch_size: 4        
+    num_workers: 2         
+    
+    augmentation:
+      mixup: 0.0
+      return_all_wav: False
+      balanced_sampling: False
+
+    path:
+      dataset_type: "MultiSource_Slakh"
+      train_data: dataset/slakh_44100/train
+      valid_data: dataset/slakh_44100/validation
+      stems: [bass, drums, guitar, piano]
+      test_data: dataset/slakh_44100/test
+      label_data: ""
+      tempo_data: ""
+      tempo_map: ""
+    
+    preprocessing:
+      audio:
+        sampling_rate: 44100
+        max_wav_value: 32768.0
+      stft:
+        filter_length: 1024
+        hop_length: 512 
+        win_length: 1024
+      mel:
+        n_mel_channels: 64
+        mel_fmin: 0
+        mel_fmax: 8000 
+        freqm: 0
+        timem: 0
+        blur: False
+        target_length: 1024
+
+model:
+  target: ldm.models.diffusion.cd4mt_diffusion.ScoreDiffusionModel
+  params:
+    # unet  - small for testing
+    unet_:
+      target: ldm.modules.modules.diffusionmodules.openaimodel.UNetModel
+      params:
+        image_size: 32            
+        in_channels: 256            # auto-adjusted (4 stems *64 channels)  
+        out_channels: 32           # auto-adjusted
+        model_channels: 64         
+        attention_resolutions: [4, 2]  
+        num_res_blocks: 1          
+        channel_mult: [1, 2, 4]   
+        num_head_channels: 16     
+        use_spatial_transformer: False
+        dims: 2                    
+        dropout: 0.1
+        
+    # cae 
+    cae_latent_dim: 64
+    cae_z_channels: 64
+    sample_rate: 44100
+    
+    # diffusion 
+    diffusion_sigma_distribution:
+      target: ctm_pl.audio_diffusion_pytorch_.diffusion.LogNormalDistribution
+      params:
+        mean: -1.2
+        std: 1.2
+    diffusion_sigma_data: 0.5
+    diffusion_dynamic_threshold: 0.0
+    lambda_perceptual: 0.0
+    
+    # multitrack 
+    num_stems: 4
+    stem_names: ["bass", "drums", "guitar", "piano"]
+    support_mixture: true
+    
+    # training 
+    base_learning_rate: 1e-4    
+    
+    # sampling 
+    sampling_steps: 30           
+    sigma_min: 0.0001
+    sigma_max: 3.0
+    rho: 7.0
+    
+    # monitoring
+    monitor: "val/loss"
+
+# inference sampling
+sampling:
+  batch_size: 1
+  num_samples: 4              
+  num_steps: 30              
+  length: 127                 
+

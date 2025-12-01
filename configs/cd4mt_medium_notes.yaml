@@ -1,0 +1,147 @@
+# 项目与运行基础配置
+project_name: "cd4mt"          # 项目标识（用于日志命名等）
+log_directory: "./lightning_logs"  # 日志与 checkpoint 存放目录
+mode: train                     # 运行模式：train / infer
+use_wandb: false                # 是否启用 Weights & Biases
+seed: 42                        # 随机种子（可复现）
+
+# 实验ID
+id:
+  name: "cd4mt_medium"         # 实验名称（日志目录等）
+  version: ""                  # 版本号（可留空）
+
+# 设备
+device: "cuda"                 # 指定运行设备
+
+# 训练器参数（常用于 Lightning 或自研 Trainer）
+trainer:
+  accelerator: gpu              # 加速设备（gpu/cpu）
+  devices: [0]                  # 使用的 GPU 索引列表（示例为 0 号卡）
+  max_epochs: 200               # 训练轮数上限
+  save_every: 10                # 每多少 epoch 额外保存一次 ckpt
+  val_every_n_steps: 1000       # 每多少 step 做一次验证
+  limit_train_batches: 1.0      # 训练集采样比例（1.0=全量）
+  limit_val_batches: 1.0        # 验证集采样比例
+  gradient_clip_val: 1.0        # 梯度裁剪阈值
+  precision: 16                 # 计算精度（16=混合精度，省显存）
+  resume_from_checkpoint: null  # 恢复训练的 ckpt 路径（无则 null）
+
+# 数据模块（DataModuleFromConfig 会基于此构建 DataLoader）
+data:
+  target: ldm.data.multitrack_datamodule.DataModuleFromConfig  # 数据模块入口类
+  params:
+    batch_size: 6               # 每批样本数（4090 推荐 6；OOM 则降为 4）
+    num_workers: 4              # DataLoader 线程数
+
+    augmentation:               # 数据增强设置
+      mixup: 0.0                # mixup 概率（0 关闭）
+      return_all_wav: False     # 是否额外返回原始波形
+      balanced_sampling: False  # 是否做类别/来源平衡采样
+
+    path:                       # 数据路径
+      dataset_type: "MultiSource_Slakh"      # 数据集类型
+      train_data: /data1/yuchen/MusicLDM-Ext/data/41000/train        # 训练数据目录
+      valid_data: /data1/yuchen/MusicLDM-Ext/data/41000/validation   # 验证数据目录
+      stems: [bass, drums, guitar, piano]      # 音轨类型
+      test_data: /data1/yuchen/MusicLDM-Ext/data/41000/test          # 测试数据目录
+      label_data: ""            # 额外标签路径（无则空）
+      tempo_data: ""            # 节奏/速度信息路径（可选）
+      tempo_map: ""             # 速度对照表（可选）
+
+    preprocessing:              # 预处理超参
+      audio:
+        sampling_rate: 44100    # 采样率（Hz）
+        max_wav_value: 32768.0  # 归一化的参考最大值（16bit）
+      stft:
+        filter_length: 1024     # FFT 窗长
+        hop_length: 512         # 帧移
+        win_length: 1024        # 窗函数长度
+      mel:
+        n_mel_channels: 64      # 梅尔通道数
+        mel_fmin: 0             # 梅尔最小频率
+        mel_fmax: 8000          # 梅尔最大频率
+        freqm: 0                # 频域遮挡（0 关闭）
+        timem: 0                # 时域遮挡（0 关闭）
+        blur: False             # 是否对谱图做模糊
+        target_length: 1024     # 目标帧长（裁剪/填充）
+
+# 模型（顶层 ScoreDiffusionModel 包一层 UNet）
+model:
+  target: ldm.models.diffusion.cd4mt_diffusion.ScoreDiffusionModel
+  params:
+    # UNet 主干（中等规模）
+    unet_:
+      target: ldm.modules.modules.diffusionmodules.openaimodel.UNetModel
+      params:
+        image_size: 32          # UNet 输入边长（CAE latent reshape 后的大小）
+        in_channels: 512        # 输入通道（4 个 stem * 128 latent 通道）
+        out_channels: 128       # 输出通道（按工程使用设置，可与 in_channels 不同）
+        model_channels: 192     # UNet 基础通道数（宽度基数）
+        attention_resolutions: [8, 4, 2]  # 使用注意力的空间尺度（与 image_size 对应）
+        num_res_blocks: 2       # 每层残差块数
+        channel_mult: [1, 2, 4] # 各层通道倍率（形成多分辨率层级）
+        num_head_channels: 32   # 每个注意力头的维度（=head_dim=32，满足 flash-attn 要求）
+        use_spatial_transformer: False  # 是否使用 ST（本工程通常关闭）
+        dims: 2                 # 2D UNet（时频二维）
+        dropout: 0.1            # Dropout 概率
+
+    # cm 脚本参数覆盖（供 src/cm/* 的 UNet/扩散构造函数使用）
+    cm_model_override:
+      image_size: 32
+      num_channels: 192         # cm.UNet 的 model_channels
+      num_res_blocks: 2
+      channel_mult: "1,2,4"
+      num_heads: 6              # 当 num_head_channels!=-1 时被忽略
+      num_head_channels: 32     # 固定每头维度=32，避免 head_dim 断言
+      num_heads_upsample: -1    # 上采样阶段头数（-1 表示与 num_heads 相同）
+      attention_resolutions: "16,8,4"  # cm 脚本使用的注意力尺度（32/16/8/4）
+      dropout: 0.1
+      class_cond: false
+      use_checkpoint: false
+      use_scale_shift_norm: true
+      resblock_updown: false
+      use_fp16: false
+      use_new_attention_order: false
+      learn_sigma: false
+      weight_schedule: "karras"
+      sigma_min: 0.0001
+      sigma_max: 3.0
+
+    # 自编码器（CAE）相关
+    cae_latent_dim: 64          # CAE 潜在维度
+    cae_z_channels: 64          # CAE latent 的通道数
+    sample_rate: 44100          # 音频采样率
+
+    # 扩散噪声分布与权重
+    diffusion_sigma_distribution:
+      target: ctm_pl.audio_diffusion_pytorch_.diffusion.LogNormalDistribution
+      params:
+        mean: -1.2               # 对数正态均值
+        std: 1.2                 # 对数正态标准差
+    diffusion_sigma_data: 0.5    # data-sigma（去噪目标的信噪权衡）
+    diffusion_dynamic_threshold: 0.0 # 动态阈值（0 关闭）
+    lambda_perceptual: 0.0       # 感知损失权重（如集成 LPIPS）
+
+    # 多音轨设定
+    num_stems: 4
+    stem_names: ["bass", "drums", "guitar", "piano"]
+    support_mixture: true
+
+    # 训练超参（顶层）
+    base_learning_rate: 1e-4
+
+    # 采样/推理
+    sampling_steps: 30
+    sigma_min: 0.0001
+    sigma_max: 3.0
+    rho: 7.0                     # Karras 调度的 rho（曲线形状）
+
+    # 监控指标（用于保存 best ckpt）
+    monitor: "val/loss"
+
+# 推理采样设置（不影响训练）
+sampling:
+  batch_size: 1
+  num_samples: 4
+  num_steps: 30
+  length: 127

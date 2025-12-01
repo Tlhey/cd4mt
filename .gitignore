@@ -1,0 +1,6 @@
+/checkpoints
+/dataset/slakh_44100
+*.wav
+*.dur
+src/
+copy/
