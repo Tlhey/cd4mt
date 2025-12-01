@@ -1,6 +1,44 @@
-/checkpoints
-/dataset/slakh_44100
+# Data and checkpoints
+/checkpoints/
+/dataset/
+
+# Figures and logs
+/fig/
+/training_logs/
+/lightning_logs/
+/samples/
+/zbak/
+
+# Large or unused local modules
+/copy/
+/src/edm/
+/src/env/
+/src/piq/
+/src/utilities/
+
+# Keep src/cm (whitelist)
+!src/cm/**
+# But still ignore caches under src/cm
+src/cm/**/__pycache__/
+src/cm/**/*.pyc
+
+# Keep music2latent package, ignore its build artifacts
+!src/music2latent/music2latent/**
+src/music2latent/**/__pycache__/
+src/music2latent/**/*.pyc
+src/music2latent/build/
+src/music2latent/*.egg-info/
+
+# Node / cache / temp
+/node_modules/
+__pycache__/
+*.pyc
+.ipynb_checkpoints/
+
+# Ignore compiled caches inside ldm
+ldm/**/__pycache__/
+ldm/**/*.pyc
+
+# Audio artifacts
 *.wav
 *.dur
-src/
-copy/
