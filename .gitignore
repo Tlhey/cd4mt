@@ -28,6 +28,8 @@ src/music2latent/**/__pycache__/
 src/music2latent/**/*.pyc
 src/music2latent/build/
 src/music2latent/*.egg-info/
+src/music2latent/music2latent/models/*
+src/music2latent/music2latent/checkpoints/*
 
 # Node / cache / temp
 /node_modules/

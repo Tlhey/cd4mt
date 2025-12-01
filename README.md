@@ -6,11 +6,11 @@ A compact workspace for experimenting with CD4MT on Slakh multi‑track audio. T
 
 ## Project Report
 Everything in visualize_cd4mt.ipynb
-- 2. env – device and imports.
-- 3. config and load_data – prints config and fetches a batch; logs `(B,S,T)`.
-- 4. CAE encoder test – encodes to `(B,64,L)`, stacks to `(B,4,64,L)`; then decode + MSE.
-- 5. CD4MT model – CT UNet with `S*C_lat=256` in/out, load EMA ckpt.
-- 6. Generation test – use Karras sampler (`test.py` pattern) or Lightning `ScoreDiffusionModel.sample(...)`.d
+- 1. env – device and imports.
+- 2. config and load_data – prints config and fetches a batch; logs `(B,S,T)`.
+- 3. CAE encoder test – encodes to `(B,64,L)`, stacks to `(B,4,64,L)`; then decode + MSE.
+- 4. CD4MT model – CT UNet with `S*C_lat=256` in/out, load EMA ckpt.
+- 5. Generation test – use Karras sampler (`test.py` pattern) or Lightning `ScoreDiffusionModel.sample(...)`.d
 
 ## Key Shapes
 - Waveforms: `(B, S, T)` (e.g., `(4, 4, 524288)`); mix `(B, T)`.
@@ -29,17 +29,7 @@ Everything in visualize_cd4mt.ipynb
   - `checkpoints/ct_unet_ema_best_val*.pth`
   - `checkpoints/ct_unet_ema_last_e*.pth`
 
-## Repository Layout (essentials)
-- `visualize_cd4mt.ipynb` – main end‑to‑end demo.
-- `configs/` – training/inference YAMLs (dataset paths, stems, audio params).
-- `dataset/slakh_44100/` – local Slakh dataset (44100 Hz).
-- `checkpoints/` – CT‑UNet weights used for inference.
-- `ldm/`, `src/` – model and training code dependencies used by the notebook.
-- `fig/` – figures exported by the notebook (waveform/spectrogram comparisons).
-- `run_visualize.sh` – headless execution helper for the notebook.
-
-## Notes
-- The notebook keeps code simple and explicit (no try/except wrappers) and prints shapes at key steps for clarity.
-- Audio playback cells rely on `IPython.display.Audio` and are meant for interactive runs.
-- Training cells create `training_logs/` on demand and run a short demonstration by default. Increase epochs and batch size for real training.
+## Code Used:
+CM: https://github.com/openai/consistency_models/
+Music2latnet: https://github.com/SonyCSLParis/music2latent/
 
