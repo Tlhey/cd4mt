@@ -1,0 +1,109 @@
+# Large config optimized for 4090 24GB
+# Based on mt-musicldm and EDM reference architectures
+# Estimated ~150-200M parameters
+
+data:
+  target: DataLoader.multitrack_datamodule.DataModuleFromConfig
+  params:
+    # Reduced batch size to fit larger model in 24GB
+    # mt-musicldm uses batch_size=2 with similar model on single GPU
+    batch_size: 8
+    num_workers: 4
+
+    augmentation:
+      mixup: 0.0
+      return_all_wav: false
+      balanced_sampling: false
+
+    path:
+      dataset_type: "MultiSource_Slakh"
+      train_data: dataset/slakh_44100/train
+      valid_data: dataset/slakh_44100/validation
+      test_data: dataset/slakh_44100/test
+      stems: [bass, drums, guitar, piano]
+      label_data: ""
+      tempo_data: ""
+      tempo_map: ""
+
+    preprocessing:
+      audio:
+        sampling_rate: 44100
+        segment_duration: 12.0
+        normalize: true
+
+model:
+  cae:
+    latent_dim: 64
+    num_stems: 4
+
+  diffusion:
+    sigma_distribution:
+      # LogNormal distribution for training noise levels
+      # exp(-1.2) ≈ 0.3, covers range roughly [0.01, 10]
+      mean: -1.2
+      std: 1.2
+    # sigma_data should match your latent std - check training output!
+    # If latent std is different, adjust this value
+    sigma_data: 1.0
+    dynamic_threshold: 0.0
+
+  unet_1d:
+    # ============================================
+    # LARGER MODEL - Reference: mt-musicldm uses 192
+    # ============================================
+    base_channels: 384  # Increased from 256 (mt-musicldm uses 192, we go bigger)
+
+    patch_blocks: 1
+    patch_factor: 1
+    kernel_sizes_init: [1, 3, 7]
+
+    # Channel multipliers - following mt-musicldm pattern [1,2,3,5]
+    # This gives channels: 384 -> 768 -> 1152 -> 1536 -> 1920
+    # More aggressive scaling than before
+    multipliers: [1, 2, 3, 4, 5]
+    factors:     [2, 2, 2, 2]
+
+    # More residual blocks per level (mt-musicldm uses 2, EDM uses 2-4)
+    num_blocks:  [2, 2, 3, 3]
+
+    # Attention at more resolutions (mt-musicldm: [8,4,2])
+    # 1 = attention enabled, 0 = disabled
+    # Enable attention at deeper (lower resolution) levels
+    attentions:  [0, 1, 1, 1]
+
+    # Attention config - increased capacity
+    attention_heads: 8
+    attention_features: 64
+    attention_multiplier: 2
+
+    resnet_groups: 8
+    kernel_multiplier_downsample: 2
+    use_nearest_upsample: false
+    use_skip_scale: true
+    use_attention_bottleneck: true
+    use_context_time: true
+    time_emb_type: "LearnedPositional"
+
+train:
+  seed: 42
+  # Lower learning rate for larger model (EDM uses 1e-4 to 2e-4)
+  lr: 5.0e-5
+  max_steps: 200000
+  log_every: 50
+  save_every: 2000
+  eval_every: 50
+  grad_clip_norm: 1.0
+  out_dir: "checkpoints/large_run"
+
+  # Gradient accumulation to simulate larger batch
+  # Effective batch = batch_size * grad_accum = 8 * 4 = 32
+  grad_accumulation_steps: 4
+
+  swanlab:
+    project: "cd4mt-large"
+
+# Inference settings (for reference)
+inference:
+  num_steps: 50
+  sigma_min: 0.002
+  sigma_max: 80.0  # Should cover training distribution

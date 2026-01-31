@@ -1,0 +1,50 @@
+# Dataset (too large for git)
+/dataset/
+
+# Model checkpoints (too large for git)
+/checkpoints/
+
+# Logs and run outputs
+/swanlog/
+/test_run/
+*.log
+
+# Python cache
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+*.pyc
+
+# Python build artifacts
+build/
+dist/
+*.egg-info/
+
+# Audio files
+*.wav
+*.dur
+*.mp3
+*.flac
+
+# IDE and editor configs
+/.vscode/
+/.claude/
+.DS_Store
+*.swp
+*.swo
+*~
+
+# PyTorch model files (except in specific locations if needed)
+*.pt
+*.pth
+*.ckpt
+
+# Jupyter notebook checkpoints
+.ipynb_checkpoints/
+
+# Environment
+.env
+venv/
+env/
+*.conda

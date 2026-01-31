@@ -1,0 +1,99 @@
+data:
+  target: DataLoader.multitrack_datamodule.DataModuleFromConfig
+  params:
+    batch_size: 64
+    num_workers: 4
+
+    augmentation:
+      mixup: 0.0
+      return_all_wav: false
+      balanced_sampling: false
+
+    path:
+      dataset_type: "MultiSource_Slakh"
+      train_data: dataset/slakh_44100/train
+      valid_data: dataset/slakh_44100/validation
+      test_data: dataset/slakh_44100/test
+      stems: [bass, drums, guitar, piano]
+      label_data: ""
+      tempo_data: ""
+      tempo_map: ""
+
+    preprocessing:
+      audio:
+        sampling_rate: 44100
+        segment_duration: 12.0
+        normalize: true
+
+model:
+  cae:
+    model_path: ""
+    latent_dim: 64
+    num_stems: 4
+    stem_names: ["bass", "drums", "guitar", "piano"]
+
+  diffusion:
+    sigma_distribution:
+      type: "LogNormal"
+      mean: -3.0
+      std: 1.0
+    sigma_data: 0.1
+    dynamic_threshold: 0.0
+    loss_type: "mse"   # 或 "l1" / "huber"（取决于你的 diffusion.py 支持哪些）
+
+  unet_1d:
+    # 对齐 modules.py::UNet1d
+    base_channels: 256
+
+    patch_blocks: 4
+    patch_factor: 1
+    kernel_sizes_init: [1, 3, 7]
+
+    # UNet1d 约束：len(multipliers) = len(factors)+1 = len(num_blocks)+1 = len(attentions)+1
+    multipliers: [1, 2, 4, 4, 4]
+    factors:     [1, 2, 2, 2]
+    num_blocks:  [1, 2, 2, 2]
+    attentions:  [0, 0, 1, 1]
+
+    attention_heads: 8
+    attention_features: 64
+    attention_multiplier: 2
+
+    resnet_groups: 8
+    kernel_multiplier_downsample: 2
+    use_nearest_upsample: false
+    use_skip_scale: true
+    use_attention_bottleneck: true
+    use_context_time: true
+
+    training_mode: ""
+    linear_probing: false
+    time_emb_type: "LearnedPositional"
+
+train:
+  seed: 42
+  precision: "fp16"
+
+  # 可选：如果你保留这个字段，train.py 会检查它必须等于 data.params.batch_size
+  batch_size_per_gpu: 4
+
+  grad_accum_steps: 1
+  lr: 1.0e-5
+  betas: [0.9, 0.999]
+  weight_decay: 0
+  warmup_steps: 0
+  max_steps: 80000
+  log_every: 10
+  save_every: 400
+  grad_clip_norm: 1.0
+
+  pad_to_factor_multiple: true
+  pad_mode: "constant"
+  pad_value: 0.0
+
+  out_dir: "checkpoints/ct"
+  resume_path: ""
+
+  swanlab:
+    project: "cd4mt-score"
+    run_name: ""  

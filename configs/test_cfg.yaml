@@ -1,0 +1,74 @@
+data:
+  target: DataLoader.multitrack_datamodule.DataModuleFromConfig
+  params:
+    batch_size: 64
+    num_workers: 2
+
+    augmentation:
+      mixup: 0.0
+      return_all_wav: false
+      balanced_sampling: false
+
+    path:
+      dataset_type: "MultiSource_Slakh"
+      train_data: dataset/slakh_44100/train
+      valid_data: dataset/slakh_44100/validation
+      test_data: dataset/slakh_44100/test
+      stems: [bass, drums, guitar, piano]
+      label_data: ""
+      tempo_data: ""
+      tempo_map: ""
+
+    preprocessing:
+      audio:
+        sampling_rate: 44100
+        segment_duration: 12.0
+        normalize: true
+
+model:
+  cae:
+    latent_dim: 64
+    num_stems: 4
+
+  diffusion:
+    sigma_distribution:
+      mean: -1.2
+      std: 1.2
+    sigma_data: 1.2  # Updated to better match actual latent std (~1.17)
+    dynamic_threshold: 0.0
+
+  unet_1d:
+    base_channels: 256
+    patch_blocks: 1
+    patch_factor: 1
+    kernel_sizes_init: [1, 3, 7]
+
+    # len(multipliers) = len(factors)+1 = len(num_blocks)+1 = len(attentions)+1
+    multipliers: [1, 2, 4, 4, 4]
+    factors:     [2, 2, 2, 2]
+    num_blocks:  [3, 3, 3, 3]
+    attentions:  [0, 0, 1, 1]
+
+    attention_heads: 8
+    attention_features: 64
+    attention_multiplier: 2
+    resnet_groups: 8
+    kernel_multiplier_downsample: 2
+    use_nearest_upsample: false
+    use_skip_scale: true
+    use_attention_bottleneck: true
+    use_context_time: true
+    time_emb_type: "LearnedPositional"
+
+train:
+  seed: 42
+  lr: 1.0e-4
+  max_steps: 100000
+  log_every: 10
+  save_every: 500
+  eval_every: 10
+  grad_clip_norm: 1.0
+  out_dir: "checkpoints/test_run"
+
+  swanlab:
+    project: "cd4mt-1d"
