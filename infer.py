@@ -1,6 +1,8 @@
 #!/usr/bin/env python
-
+# conda activate  /root/micromamba/envs/cdp10
 # python infer.py --ckpt checkpoints/test_run/step_500.pt --config configs/test_cfg.yaml
+# python infer.py --ckpt checkpoints/gpu48gb_run/step_50000.pt --config configs/gpu48gb_cfg.yaml --num_samples 1 --num_steps 250 --sigma_min 0.002 --sigma_max 5.0 --output_dir quick_check_step50000_s250 > quick_check_step50000_s250.log 2>&1 
+
 """
 infer.py - Generate audio samples from trained diffusion model
 """
@@ -10,6 +12,11 @@ import argparse
 import yaml
 import numpy as np
 import torch
+try:
+    # Allow PyTorch 2.6+ safe unpickler to load older checkpoints
+    torch.serialization.add_safe_globals([np.core.multiarray.scalar, np.dtype])
+except Exception:
+    pass
 import soundfile as sf
 from pathlib import Path
 
@@ -66,6 +73,31 @@ def build_diffusion(cfg: dict, net: UNet1d) -> Diffusion:
     )
 
 
+def load_checkpoint_state(path: str, device: torch.device):
+    """Robustly load a checkpoint file and return (model_state, step, ema_state).
+    - Forces weights_only=False for compatibility with older pickles.
+    - Accepts multiple common layouts: {model: {...}}, {state_dict: {...}} or raw dict.
+    - Strips 'module.' prefixes from DataParallel training.
+    - Returns ema_state if available (dict of parameter tensors)
+    """
+    # Load on CPU to reduce GPU memory spikes and use weights_only for lower RAM
+    map_loc = torch.device('cpu')
+    ckpt = torch.load(path, map_location=map_loc, weights_only=True)
+    ema_state = None
+    if isinstance(ckpt, dict):
+        state = ckpt.get("model") or ckpt.get("state_dict") or ckpt
+        ema_state = ckpt.get("ema")
+        step = ckpt.get("step") or ckpt.get("global_step") or ckpt.get("epoch") or 0
+    else:
+        state, step = ckpt, 0
+    # Strip DataParallel prefixes if present
+    if isinstance(state, dict):
+        state = {k.replace("module.", ""): v for k, v in state.items()}
+    if isinstance(ema_state, dict):
+        ema_state = {k.replace("module.", ""): v for k, v in ema_state.items()}
+    return state, int(step), ema_state
+
+
 def decode_latents(ae: EncoderDecoder, latents: torch.Tensor, num_stems: int, latent_dim: int) -> torch.Tensor:
     """Decode [B, S*C, L] latents to [B, S, T] waveforms."""
     B, SC, L = latents.shape
@@ -117,8 +149,9 @@ def main():
     parser.add_argument("--ckpt", type=str, default="/data1/yuchen/cd4mt/checkpoints/test_run/step_5000.pt")
     parser.add_argument("--config", type=str, default="configs/test_cfg.yaml")
     parser.add_argument("--num_samples", type=int, default=5)
-    parser.add_argument("--num_steps", type=int, default=50)
+    parser.add_argument("--num_steps", type=int, default=50, help="Number of diffusion sampling steps")
     parser.add_argument("--sigma_max", type=float, default=5.0, help="Max sigma for sampling (default: 5.0)")
+    parser.add_argument("--sigma_min", type=float, default=0.002, help="Min sigma for sampling (default: 0.002)")
     parser.add_argument("--output_dir", type=str, default=None)
     args = parser.parse_args()
 
@@ -137,11 +170,27 @@ def main():
     unet = build_unet(cfg, in_channels)
     diffusion = build_diffusion(cfg, unet).to(device)
 
-    # Load checkpoint
-    ckpt = torch.load(args.ckpt, map_location=device)
-    diffusion.load_state_dict(ckpt["model"])
+    # Load checkpoint (robust)
+    state, step, ema_state = load_checkpoint_state(args.ckpt, device)
+    missing, unexpected = diffusion.load_state_dict(state, strict=False)
+    if missing or unexpected:
+        print(f"Non-strict load: missing={len(missing)}, unexpected={len(unexpected)}")
+    # Auto-apply EMA weights if available
+    applied_ema = False
+    if isinstance(ema_state, dict):
+        with torch.no_grad():
+            named_params = dict(diffusion.named_parameters())
+            used, skipped = 0, 0
+            for k, v in ema_state.items():
+                if k in named_params:
+                    named_params[k].data.copy_(v.to(named_params[k].data.device, dtype=named_params[k].data.dtype))
+                    used += 1
+                else:
+                    skipped += 1
+            applied_ema = used > 0
+            print(f"Applied EMA to model params: used={used}, skipped={skipped}")
     diffusion.eval()
-    print(f"Loaded checkpoint: {args.ckpt} (step {ckpt['step']})")
+    print(f"Loaded checkpoint: {args.ckpt} (step {step}) | ema_applied={applied_ema}")
 
     # Load CAE decoder
     ae = EncoderDecoder(device=device)
@@ -161,10 +210,20 @@ def main():
     latent_length = 128
     latent_shape = (args.num_samples, in_channels, latent_length)
 
-    print(f"Generating {args.num_samples} samples with {args.num_steps} diffusion steps (sigma_max={args.sigma_max})...")
+    print(
+        f"Generating {args.num_samples} samples with {args.num_steps} steps "
+        f"(sigma_min={args.sigma_min}, sigma_max={args.sigma_max})..."
+    )
 
     # Sample
-    gen_latents = sample_from_diffusion(diffusion, latent_shape, device, num_steps=args.num_steps, sigma_max=args.sigma_max)
+    gen_latents = sample_from_diffusion(
+        diffusion,
+        latent_shape,
+        device,
+        num_steps=args.num_steps,
+        sigma_min=args.sigma_min,
+        sigma_max=args.sigma_max,
+    )
     print(f"Generated latents shape: {gen_latents.shape}")
 
     # Decode to waveforms

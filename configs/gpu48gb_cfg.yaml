@@ -88,9 +88,11 @@ train:
   # 训练步数
   max_steps: 100000
   log_every: 50
-  save_every: 1000                # 每 1000 步保存一次
+  save_every: 10000                # 每 1000 步保存一次
   eval_every: 500                 # 每 500 步评估一次
   grad_clip_norm: 1.0
+  # Optimizer stall detection threshold (mean |Δparam|)
+  param_delta_warn_threshold: 1.0e-12
 
   # 数据处理
   pad_to_factor_multiple: true
@@ -100,6 +102,18 @@ train:
   # 输出路径
   out_dir: "checkpoints/gpu48gb_run"
   resume_path: ""
+  resume_ckpt: "checkpoints/gpu48gb_run/step_8000.pt"
+
+  # EMA settings
+  ema:
+    enabled: true
+    decay: 0.999
+
+  # Checkpoint size controls
+  checkpoint:
+    save_optimizer: false      # 如需断点严格恢复再设为 true
+    save_ema: true             # 保存 EMA（用于更稳推理），可选关闭
+    state_dtype: fp16          # 将权重保存为 fp16 以减小体积
 
   # 日志
   swanlab:
