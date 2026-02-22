@@ -1,0 +1,98 @@
+data:
+  target: DataLoader.multitrack_datamodule.DataModuleFromConfig
+  params:
+    batch_size: 48            # Slightly smaller than score training for stability
+    num_workers: 2
+
+    augmentation:
+      mixup: 0.0
+      return_all_wav: false
+      balanced_sampling: false
+
+    path:
+      dataset_type: "MultiSource_Slakh"
+      train_data: dataset/slakh_44100/train
+      valid_data: dataset/slakh_44100/validation
+      test_data: dataset/slakh_44100/test
+      stems: [bass, drums, guitar, piano]
+      label_data: ""
+      tempo_data: ""
+      tempo_map: ""
+
+    preprocessing:
+      audio:
+        sampling_rate: 44100
+        segment_duration: 12.0
+        normalize: true
+
+model:
+  cae:
+    latent_dim: 64
+    num_stems: 4
+
+  diffusion:
+    sigma_distribution:
+      mean: -1.2
+      std: 1.2
+    # Keep sigma_data identical to the score model; this matches latent std (~1.17)
+    sigma_data: 1.2
+    dynamic_threshold: 0.0
+
+  unet_1d:
+    base_channels: 256
+    patch_blocks: 1
+    patch_factor: 1
+    kernel_sizes_init: [1, 3, 7]
+
+    multipliers: [1, 2, 4, 4, 4]
+    factors:     [2, 2, 2, 2]
+    num_blocks:  [3, 3, 3, 3]
+    attentions:  [0, 0, 1, 1]
+
+    attention_heads: 8
+    attention_features: 64
+    attention_multiplier: 2
+    resnet_groups: 8
+    kernel_multiplier_downsample: 2
+    use_nearest_upsample: false
+    use_skip_scale: true
+    use_attention_bottleneck: true
+    use_context_time: true
+    time_emb_type: "LearnedPositional"
+
+train:
+  lr: 1.0e-4
+  weight_decay: 0.0
+  max_steps: 20000           # CT typically converges faster than score training
+  log_every: 10
+  save_every: 1000
+  eval_every: 10             # Evaluate FAD every N optimizer steps (after grad_accum)
+  grad_clip_norm: 1.0
+  grad_accumulation_steps: 1
+  out_dir: "checkpoints/ct_run"
+  state_dtype: "fp32"
+
+ct:
+  # Teacher (score) model checkpoint and its config
+  teacher_ckpt: "/data1/yuchen/cd4mt/checkpoints/test_run/step_1500.pt"
+  teacher_config: "/data1/yuchen/cd4mt/configs/test_cfg.yaml"
+
+  # Karras noise schedule for CT pair sampling
+  sigma_min: 0.002
+  sigma_max: 5.0
+  rho: 7.0
+  num_scales: 64
+
+  # Loss + weighting
+  weight_schedule: "karras"   # {karras,snr,snr+1,truncated-snr,uniform}
+  loss_norm: "l2"             # l2 works well for latents
+  ema_decay: 0.999            # target model decay
+
+seed: 42
+
+fad:
+  enabled: true
+  num_eval: 8          # number of samples and refs used to compute FAD
+  steps: 40            # sampling steps for evaluation
+  sigma_min: 0.002
+  sigma_max: 5.0
